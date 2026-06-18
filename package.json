@@ -1,7 +1,0 @@
-{
-  "name": "genai-root",
-  "private": true,
-  "scripts": {
-    "dev": "npm --prefix Backend run dev"
-  }
-}
