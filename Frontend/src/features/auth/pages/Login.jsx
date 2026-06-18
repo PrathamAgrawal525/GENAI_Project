@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 import '../auth.form.scss'
 
 const Login = () => {
@@ -9,7 +10,7 @@ const handleSubmit = (e) => {
 
   return (
     <main>
-        <div classname = "form-container">
+                <div className="form-container">
             <h1>Login</h1>
 
             <form onSubmit={handleSubmit}>
@@ -23,6 +24,8 @@ const handleSubmit = (e) => {
                 </div>
                 <button className="button primary-button">Login</button>
             </form>
+
+            <p>Don't have an account? <Link to="/register" className="link">Register here</Link></p>
         </div>
     </main>
   )
