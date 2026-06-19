@@ -11,7 +11,7 @@ const Protected = ({ children }) => {
     }
 
     if (!user) {
-        return <Navigate to="/login" replace />; // Redirect to login page if user is not authenticated
+        return <Navigate to="/login" />; // Redirect to login page if user is not authenticated
     }
 
     return (
