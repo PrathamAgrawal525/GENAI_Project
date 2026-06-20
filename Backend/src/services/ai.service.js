@@ -6,8 +6,6 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GENAI_API_KEY,
 });
 
-
-
 const interviewReportSchema = z.object({
   technicalQuestions: z
     .array(
@@ -17,17 +15,16 @@ const interviewReportSchema = z.object({
           .describe("The technical question can be asked in the interview"),
         intention: z
           .string()
-          .describe(
-            "The intention of interviwer behind asking the question",
-          ),
+          .describe("The intention of interviwer behind asking the question"),
         answer: z
           .string()
           .describe("How to answer the question in an ideal way"),
       }),
     )
-    .describe(
-      "List of technical questions that can be asked in the interview",
-    ),
+    .describe("List of technical questions that can be asked in the interview"),
+  title: z
+    .string()
+    .describe("The title of the interview report, usually the position name"),
   behavioralQuestions: z
     .array(
       z.object({
@@ -36,17 +33,13 @@ const interviewReportSchema = z.object({
           .describe("The behavioral question can be asked in the interview"),
         intention: z
           .string()
-          .describe(
-            "The intention of interviwer behind asking the question",
-          ),
+          .describe("The intention of interviwer behind asking the question"),
         answer: z
           .string()
           .describe("How to answer the question in an ideal way"),
       }),
     )
-    .describe(
-      "List of technical questions that can be asked in the interview",
-    ),
+    .describe("List of technical questions that can be asked in the interview"),
   skillGaps: z
     .array(
       z.object({
