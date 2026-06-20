@@ -1,21 +1,28 @@
 const pdfParse = require("pdf-parse");
-const generateInterviewReport = require("../services/ai.service");
+const { generateInterviewReport } = require("../services/ai.service");
 const interviewReportModel = require("../models/interviewReport.model");
 
 async function generateInterviewReportController(req, res) {
+  const userId = req.user?.id;
 
-  const resumeContent = await pdfParse(req.file.buffer);
+  if (!userId) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText();
   const { selfDescription, jobDescription } = req.body;
 
   const interviewReportByAi = await generateInterviewReport({
-    resume: resumeContent,
+    resume: resumeContent.text,
     selfDescription,
     jobDescription,
   });
 
   const interviewReport = await interviewReportModel.create({
-    user: req.user._id,
-    resume: resumeContent,
+    user: userId,
+    resume: resumeContent.text,
     selfDescription,
     jobDescription,
     ...interviewReportByAi
