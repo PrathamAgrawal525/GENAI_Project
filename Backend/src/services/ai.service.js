@@ -1,6 +1,5 @@
 const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod");
-const { zodToJsonSchema } = require("zod-to-json-schema");
 const puppeteer = require("puppeteer");
 
 const ai = new GoogleGenAI({
@@ -104,12 +103,15 @@ async function generateInterviewReport({
                         Job Description: ${jobDescription}
 `;
 
+  const responseSchema = interviewReportSchema.toJSONSchema();
+  delete responseSchema.$schema;
+
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseSchema: zodToJsonSchema(interviewReportSchema),
+      responseSchema: responseSchema,
     },
   });
 
@@ -158,12 +160,15 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
                         The resume should not be so lengthy, it should ideally be 1-2 pages long when converted to PDF. Focus on quality rather than quantity and make sure to include all the relevant information that can increase the candidate's chances of getting an interview call for the given job description.
                     `;
 
+  const responseSchema = resumePdfSchema.toJSONSchema();
+  delete responseSchema.$schema;
+
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseSchema: zodToJsonSchema(resumePdfSchema),
+      responseSchema: responseSchema,
     },
   });
 
