@@ -2,9 +2,10 @@ import {
   getAllInterviewReports,
   generateInterviewReport,
   getInterviewReportById,
+  generateResumePdf,
 } from "../services/interview.api";
 import { useContext, useEffect } from "react";
-import { InterviewContext } from "../interview.context.jsx";
+import { InterviewContext } from "../interview.context";
 import { useParams } from "react-router";
 
 export const useInterview = () => {
@@ -31,9 +32,7 @@ export const useInterview = () => {
         selfDescription,
         resumeFile,
       });
-      if (response?.interviewReport) {
-        setReport(response.interviewReport);
-      }
+      setReport(response.interviewReport);
     } catch (error) {
       console.log(error);
     } finally {
@@ -48,15 +47,13 @@ export const useInterview = () => {
     let response = null;
     try {
       response = await getInterviewReportById(interviewId);
-      if (response?.interviewReport) {
-        setReport(response.interviewReport);
-      }
+      setReport(response.interviewReport);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
-    return response?.interviewReport ?? null;
+    return response.interviewReport;
   };
 
   const getReports = async () => {
@@ -64,34 +61,33 @@ export const useInterview = () => {
     let response = null;
     try {
       response = await getAllInterviewReports();
-      setReports(response?.interviewReports ?? []);
+      setReports(response.interviewReports);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
 
-    return response?.interviewReports ?? [];
+    return response.interviewReports;
   };
 
   const getResumePdf = async (interviewReportId) => {
+    setLoading(true);
+    let response = null;
     try {
-      const resumeText = report?.resume;
-
-      if (!resumeText) {
-        throw new Error("Resume is not available for download");
-      }
-
+      response = await generateResumePdf({ interviewReportId });
       const url = window.URL.createObjectURL(
-        new Blob([resumeText], { type: "text/plain" }),
+        new Blob([response], { type: "application/pdf" }),
       );
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `resume_${interviewReportId}.txt`);
+      link.setAttribute("download", `resume_${interviewReportId}.pdf`);
       document.body.appendChild(link);
       link.click();
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
