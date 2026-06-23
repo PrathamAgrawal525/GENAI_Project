@@ -14,8 +14,30 @@
         color: white;
     }
 
-    &:active{
+    &.secondary-button{
+        background-color: transparent;
+        border: 1px solid #2a3348;
+        color: #e6edf3;
+        
+        &:hover:not(:disabled) {
+            background-color: #1c2230;
+            border-color: #3b82f6;
+        }
+    }
+
+    &:active:not(:disabled){
         transform: scale(0.9);
     }
 
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

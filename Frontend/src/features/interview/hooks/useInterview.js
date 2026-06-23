@@ -4,13 +4,14 @@ import {
   getInterviewReportById,
   generateResumePdf,
 } from "../services/interview.api";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { InterviewContext } from "../interview.context";
 import { useParams } from "react-router";
 
 export const useInterview = () => {
   const context = useContext(InterviewContext);
   const { interviewId } = useParams();
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   if (!context) {
     throw new Error("useInterview must be used within an InterviewProvider");
@@ -72,7 +73,7 @@ export const useInterview = () => {
   };
 
   const getResumePdf = async (interviewReportId) => {
-    setLoading(true);
+    setPdfLoading(true);
     let response = null;
     try {
       response = await generateResumePdf({ interviewReportId });
@@ -87,7 +88,7 @@ export const useInterview = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setPdfLoading(false);
     }
   };
 
@@ -101,6 +102,7 @@ export const useInterview = () => {
 
   return {
     loading,
+    pdfLoading,
     report,
     reports,
     generateReport,

@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
-import { useNavigate } from 'react-router'
+import { useNavigate, useLocation } from 'react-router'
 
 const Home = () => {
 
     const { loading, generateReport, reports } = useInterview()
-    const [jobDescription, setJobDescription] = useState("")
-    const [selfDescription, setSelfDescription] = useState("")
+    const location = useLocation()
+    const [jobDescription, setJobDescription] = useState(location.state?.jobDescription || "")
+    const [selfDescription, setSelfDescription] = useState(location.state?.selfDescription || "")
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
@@ -52,12 +53,13 @@ const Home = () => {
                             <span className='badge badge--required'>Required</span>
                         </div>
                         <textarea
+                            value={jobDescription}
                             onChange={(e) => { setJobDescription(e.target.value) }}
                             className='panel__textarea'
                             placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
                             maxLength={5000}
                         />
-                        <div className='char-counter'>0 / 5000 chars</div>
+                        <div className='char-counter'>{jobDescription.length} / 5000 chars</div>
                     </div>
 
                     {/* Vertical Divider */}
@@ -95,6 +97,7 @@ const Home = () => {
                         <div className='self-description'>
                             <label className='section-label' htmlFor='selfDescription'>Quick Self-Description</label>
                             <textarea
+                                value={selfDescription}
                                 onChange={(e) => { setSelfDescription(e.target.value) }}
                                 id='selfDescription'
                                 name='selfDescription'
