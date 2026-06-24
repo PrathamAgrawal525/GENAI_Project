@@ -11,8 +11,10 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await handleRegister({ username, email, password });
-        navigate('/'); // Redirect to home page after registration
+        const success = await handleRegister({ username, email, password });
+        if (success) {
+            navigate('/'); // Redirect to home page after registration
+        }
     }
 
     if (loading) {

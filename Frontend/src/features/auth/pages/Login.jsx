@@ -12,10 +12,10 @@ const Login = () => {
 
 const handleSubmit = async (e) => {
     e.preventDefault();
-    handleLogin({ email, password });
-    navigate('/'); // Redirect to home page after login
-    // You would typically get the email and password from the form inputs here
-    // and then call handleLogin with those values
+    const success = await handleLogin({ email, password });
+    if (success) {
+        navigate('/'); // Redirect to home page after login
+    }
 }
 
 if (loading) {
