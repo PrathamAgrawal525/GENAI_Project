@@ -101,36 +101,46 @@ async function getAllInterviewReportsController(req, res) {
 async function generateResumePdfController(req, res) {
   const { interviewReportId } = req.params;
 
-  const interviewReport =
-    await interviewReportModel.findById(interviewReportId);
+  try {
+    const interviewReport =
+      await interviewReportModel.findById(interviewReportId);
 
-  if (!interviewReport) {
-    return res.status(404).json({
-      message: "Interview report not found.",
+    if (!interviewReport) {
+      return res.status(404).json({
+        message: "Interview report not found.",
+      });
+    }
+
+    let pdfBuffer = interviewReport.resumePdf;
+
+    if (!pdfBuffer) {
+      console.log(`Generating resume PDF on the fly for report: ${interviewReportId}`);
+      const { resume, jobDescription, selfDescription } = interviewReport;
+
+      pdfBuffer = await generateResumePdf({
+        resume,
+        jobDescription,
+        selfDescription,
+      });
+
+      interviewReport.resumePdf = Buffer.from(pdfBuffer);
+      await interviewReport.save();
+      console.log(`Successfully generated and saved resume PDF for report: ${interviewReportId}`);
+    }
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename=resume_${interviewReportId}.pdf`,
+    });
+
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error(`Error in generateResumePdfController for report: ${interviewReportId}`, error);
+    res.status(500).json({
+      message: "Failed to generate or retrieve resume PDF.",
+      error: error.message,
     });
   }
-
-  let pdfBuffer = interviewReport.resumePdf;
-
-  if (!pdfBuffer) {
-    const { resume, jobDescription, selfDescription } = interviewReport;
-
-    pdfBuffer = await generateResumePdf({
-      resume,
-      jobDescription,
-      selfDescription,
-    });
-
-    interviewReport.resumePdf = Buffer.from(pdfBuffer);
-    await interviewReport.save();
-  }
-
-  res.set({
-    "Content-Type": "application/pdf",
-    "Content-Disposition": `attachment; filename=resume_${interviewReportId}.pdf`,
-  });
-
-  res.send(pdfBuffer);
 }
 
 module.exports = {

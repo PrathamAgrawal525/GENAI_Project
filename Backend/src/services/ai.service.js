@@ -119,9 +119,16 @@ async function generateInterviewReport({
 }
 
 async function generatePdfFromHtml(htmlContent) {
+  const fs = require("fs");
+  const executablePath =
+    process.env.PUPPETEER_EXECUTABLE_PATH &&
+    fs.existsSync(process.env.PUPPETEER_EXECUTABLE_PATH)
+      ? process.env.PUPPETEER_EXECUTABLE_PATH
+      : undefined;
+
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    executablePath,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",

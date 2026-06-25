@@ -2,6 +2,8 @@
 
 An intelligent, full-stack web application designed to help job seekers generate custom interview preparation strategies, tailor resumes, and practice role-specific technical and behavioral questions using Google's Gemini AI.
 
+### 🌐 Live Deployment: [https://ai-interview-planner-agent.vercel.app/](https://ai-interview-planner-agent.vercel.app/)
+
 ---
 
 ## 🌟 Key Features
@@ -123,10 +125,10 @@ GENAI/
 *   `GET /api/auth/get-me` - Get current session user details (Protected).
 
 ### Interview Strategy
-*   `POST /api/interview/generate` - Generate new strategy report (Protected).
-*   `GET /api/interview/reports` - Fetch all generated reports for the current user (Protected).
-*   `GET /api/interview/report/:id` - Fetch details of a single report by ID (Protected).
-*   `GET /api/interview/resume-pdf/:id` - Retrieve the AI-tailored resume rendered as PDF (Protected).
+*   `POST /api/interview/` - Generate new strategy report (Protected).
+*   `GET /api/interview/` - Fetch all generated reports for the current user (Protected).
+*   `GET /api/interview/report/:interviewId` - Fetch details of a single report by ID (Protected).
+*   `POST /api/interview/resume/pdf/:interviewReportId` - Retrieve the AI-tailored resume rendered as PDF (Protected).
 
 ---
 

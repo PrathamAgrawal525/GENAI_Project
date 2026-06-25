@@ -54,7 +54,7 @@ export const useInterview = () => {
     } finally {
       setLoading(false);
     }
-    return response.interviewReport;
+    return response?.interviewReport ?? null;
   };
 
   const getReports = async () => {
@@ -69,7 +69,7 @@ export const useInterview = () => {
       setLoading(false);
     }
 
-    return response.interviewReports;
+    return response?.interviewReports ?? [];
   };
 
   const getResumePdf = async (interviewReportId) => {
