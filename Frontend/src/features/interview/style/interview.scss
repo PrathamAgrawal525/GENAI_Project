@@ -479,3 +479,119 @@ $severity-low: #3fb950;
         border-color: rgba($severity-low, 0.25);
     }
 }
+
+// ── Mobile Responsive Overrides ───────────────────────────────────────────────
+@media (max-width: 992px) {
+    .interview-page {
+        padding: 0.75rem;
+    }
+
+    .interview-layout {
+        flex-direction: column;
+        border-radius: 0.75rem;
+    }
+
+    .interview-divider {
+        display: none;
+    }
+
+    .interview-nav {
+        width: 100%;
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid $border-color;
+        gap: 1rem;
+
+        .nav-content {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            overflow-x: auto;
+            width: 100%;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        &__label {
+            display: none;
+        }
+
+        &__item {
+            width: auto;
+            white-space: nowrap;
+            flex: 1;
+            justify-content: center;
+            padding: 0.6rem 1rem;
+        }
+
+        // Make Download Resume button span full-width
+        .button.primary-button {
+            width: 100%;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .interview-content {
+        max-height: none;
+        overflow-y: visible;
+        padding: 1.25rem 1rem;
+        padding-bottom: 3rem;
+    }
+
+    .interview-sidebar {
+        width: 100%;
+        padding: 1.5rem 1rem;
+        border-top: 1px solid $border-color;
+    }
+}
+
+// Tablet-specific Sidebar Grid layout
+@media (min-width: 600px) and (max-width: 992px) {
+    .interview-sidebar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        align-items: start;
+
+        .match-score {
+            align-items: center;
+            &__label {
+                align-self: center;
+            }
+        }
+
+        .button.secondary-button {
+            grid-column: 1 / -1;
+            margin-top: 0 !important;
+        }
+
+        .sidebar-divider {
+            display: none;
+        }
+    }
+}
+
+// Small mobile timelines adjustment
+@media (max-width: 600px) {
+    .roadmap-list {
+        &::before {
+            left: 18px;
+        }
+    }
+
+    .roadmap-day {
+        padding-left: 2.25rem;
+
+        &::before {
+            left: 11px;
+            width: 12px;
+            height: 12px;
+            top: 0.95rem;
+        }
+    }
+}

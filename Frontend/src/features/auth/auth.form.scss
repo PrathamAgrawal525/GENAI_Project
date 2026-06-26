@@ -6,7 +6,9 @@ main{
     align-items: center;
 
     .form-container{
-        min-width: 350px;
+        width: 100%;
+        max-width: 400px;
+        padding-inline: 1.5rem;
         display: flex;
         flex-direction: column;
         gap: 1rem;
