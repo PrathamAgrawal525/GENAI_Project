@@ -155,7 +155,7 @@ async function generatePdfFromHtml(htmlContent) {
   return pdfBuffer;
 }
 
-async function generateResumePdf({ resume, selfDescription, jobDescription }) {
+async function generateResumeHtml({ resume, selfDescription, jobDescription }) {
   const resumePdfSchema = z.object({
     html: z
       .string()
@@ -191,9 +191,24 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
   const jsonContent = JSON.parse(response.text);
 
-  const pdfBuffer = await generatePdfFromHtml(jsonContent.html);
+  return jsonContent.html;
+}
+
+async function generateResumePdf({ resume, selfDescription, jobDescription }) {
+  const htmlContent = await generateResumeHtml({
+    resume,
+    selfDescription,
+    jobDescription,
+  });
+
+  const pdfBuffer = await generatePdfFromHtml(htmlContent);
 
   return pdfBuffer;
 }
 
-module.exports = { generateInterviewReport, generateResumePdf };
+module.exports = {
+  generateInterviewReport,
+  generateResumePdf,
+  generateResumeHtml,
+  generatePdfFromHtml,
+};

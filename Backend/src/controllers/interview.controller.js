@@ -2,6 +2,8 @@ const pdfParse = require("pdf-parse");
 const {
   generateInterviewReport,
   generateResumePdf,
+  generateResumeHtml,
+  generatePdfFromHtml,
 } = require("../services/ai.service");
 const interviewReportModel = require("../models/interviewReport.model");
 
@@ -34,19 +36,28 @@ async function generateInterViewReportController(req, res) {
     ...interViewReportByAi,
   });
 
-  // Pre-generate resume PDF in the background asynchronously
-  generateResumePdf({
+  // Pre-generate resume HTML and PDF in the background asynchronously
+  generateResumeHtml({
     resume: resumeText,
     jobDescription,
     selfDescription,
   })
-    .then(async (pdfBuffer) => {
-      interviewReport.resumePdf = Buffer.from(pdfBuffer);
+    .then(async (htmlContent) => {
+      interviewReport.resumeHtml = htmlContent;
       await interviewReport.save();
-      console.log(`Successfully pre-generated resume PDF for report: ${interviewReport._id}`);
+      console.log(`Successfully pre-generated resume HTML for report: ${interviewReport._id}`);
+
+      try {
+        const pdfBuffer = await generatePdfFromHtml(htmlContent);
+        interviewReport.resumePdf = Buffer.from(pdfBuffer);
+        await interviewReport.save();
+        console.log(`Successfully pre-generated resume PDF for report: ${interviewReport._id}`);
+      } catch (pdfError) {
+        console.error(`Error pre-generating resume PDF for report: ${interviewReport._id}`, pdfError);
+      }
     })
     .catch((error) => {
-      console.error(`Error pre-generating resume PDF for report: ${interviewReport._id}`, error);
+      console.error(`Error pre-generating resume HTML/PDF for report: ${interviewReport._id}`, error);
     });
 
   res.status(201).json({
@@ -112,20 +123,36 @@ async function generateResumePdfController(req, res) {
     }
 
     let pdfBuffer = interviewReport.resumePdf;
+    let htmlContent = interviewReport.resumeHtml;
 
     if (!pdfBuffer) {
-      console.log(`Generating resume PDF on the fly for report: ${interviewReportId}`);
-      const { resume, jobDescription, selfDescription } = interviewReport;
+      console.log(`Generating resume PDF/HTML on the fly for report: ${interviewReportId}`);
+      
+      if (!htmlContent) {
+        const { resume, jobDescription, selfDescription } = interviewReport;
+        htmlContent = await generateResumeHtml({
+          resume,
+          jobDescription,
+          selfDescription,
+        });
+        interviewReport.resumeHtml = htmlContent;
+        await interviewReport.save();
+      }
 
-      pdfBuffer = await generateResumePdf({
-        resume,
-        jobDescription,
-        selfDescription,
-      });
-
-      interviewReport.resumePdf = Buffer.from(pdfBuffer);
-      await interviewReport.save();
-      console.log(`Successfully generated and saved resume PDF for report: ${interviewReportId}`);
+      try {
+        pdfBuffer = await generatePdfFromHtml(htmlContent);
+        interviewReport.resumePdf = Buffer.from(pdfBuffer);
+        await interviewReport.save();
+        console.log(`Successfully generated and saved resume PDF for report: ${interviewReportId}`);
+      } catch (pdfError) {
+        console.error(`Puppeteer PDF generation failed:`, pdfError);
+        // Fallback: If Puppeteer fails but we have the HTML, return a JSON response with the HTML content
+        return res.status(200).json({
+          fallback: true,
+          html: htmlContent,
+          message: "Puppeteer PDF generation failed. Falling back to client-side printing.",
+        });
+      }
     }
 
     res.set({
